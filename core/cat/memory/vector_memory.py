@@ -92,7 +92,10 @@ class VectorMemoryCollection(Qdrant):
                 log(f'Collection "{self.collection_name}" has the same size of the embedder', "INFO")
             else:
                 log(f'Collection "{self.collection_name}" has different size of the embedder', "WARNING")
-                # TODO: dump collection on disk before deleting, so it can be recovered
+                dump_file = f"{self.collection_name}_dump.json"
+                with open(dump_file, "w") as f:
+                    json.dump(collection, f)
+                log(f'Collection "{self.collection_name}" dumped to {dump_file}', "INFO")
                 self.client.delete_collection(self.collection_name)
                 log(f'Collection "{self.collection_name}" deleted', "WARNING")
                 self.create_collection()
